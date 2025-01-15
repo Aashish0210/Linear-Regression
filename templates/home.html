@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Dark Theme Base */
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        /* Title and Line Animation */
+        .title-container {
+            position: relative;
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .title-text {
+            color: #00bcd4;
+            font-size: 3.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Content Box Styling */
+        .content-box {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+            margin-top: 30px;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .content-box:before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-image: linear-gradient(45deg, #ff6f00, #ff1493, #00bcd4, #32cd32);
+            background-size: 400% 400%;
+            animation: colorfulBorder 5s ease-in-out infinite;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #00bcd4;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            padding: 10px 30px;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0097a7;
+            transform: scale(1.1);
+        }
+
+        /* Form Styling */
+        .form-control {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            background-color: #f4f4f4;
+            transform: scale(1.05);
+        }
+
+        /* Animation for Text and Borders */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes colorfulBorder {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Intro Section */
+        .intro-section {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+
+        .doc-header {
+            color: #00bcd4;
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+        }
+
+        .doc-text {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .doc-code {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .title-text {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Title and Line Animation -->
+        <div class="title-container">
+            <div class="title-text">Linear Regression</div>
+        </div>
+
+        <!-- Introductory Section -->
+        <div class="intro-section">
+            <h2 class="text-light">Welcome to Linear Regression Demo</h2>
+            <p class="intro-text">Linear regression is a statistical method for modeling the relationship between a dependent variable and one or more independent variables. It is widely used for prediction and analysis in various fields such as finance, healthcare, and marketing.</p>
+            <p class="intro-text">In this demo, you'll input a value and see how linear regression is used to predict results. You'll also visualize the regression line and better understand how the model works.</p>
+        </div>
+
+        <!-- Content Box for User Input -->
+        <div class="content-box">
+            <form method="POST" class="text-center">
+                <div class="form-group">
+                    <input type="text" name="input_value" class="form-control" placeholder="Enter a value" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+        {% if result %}
+        <div class="content-box">
+            <h3>Linear Regression Prediction: {{ result }}</h3>
+            <h3>Polynomial Regression Prediction: {{ poly_result }}</h3>
+        </div>
+        {% endif %}
+
+        {% if img_base64 %}
+        <div class="content-box">
+            <h3>Regression Graph</h3>
+            <img src="data:image/png;base64,{{ img_base64 }}" alt="Regression Graph" width="600">
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="alert alert-danger mt-5" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if linear_formula %}
+        <div class="content-box">
+            <div class="doc-header">How the Outcome Was Obtained:</div>
+            <div class="formula-box">
+                <h4 class="doc-header">Linear Regression Formula</h4>
+                <p class="doc-text"><code>Y = β₀ + β₁ * X</code></p>
+                <p class="doc-text"><strong>Explanation:</strong> Linear regression tries to find the line that best fits the data. The equation used is:</p>
+                <ul class="doc-text">
+                    <li><strong>Y</strong> - The predicted value (dependent variable).</li>
+                    <li><strong>X</strong> - The input value (independent variable).</li>
+                    <li><strong>β₀</strong> - Intercept, the value of Y when X = 0.</li>
+                    <li><strong>β₁</strong> - Slope, the rate of change in Y per unit change in X.</li>
+                </ul>
+                <p class="doc-text">The goal of linear regression is to minimize the difference between the predicted and actual values, which is why we find the line of best fit using this formula.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+
+</html>
